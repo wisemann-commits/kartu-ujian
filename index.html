@@ -4,102 +4,157 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Generator Kartu Peserta Ujian</title>
+
+  <!-- Font bagus & jelas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     :root {
-      --primary: #1a365d;
-      --primary-light: #2b6cb0;
-      --border: #2d3748;
-      --label: #4a5568;
-      --bg: #f0f4f8;
+      --bg: #f1f5f9;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1e3a5f;
+      --primary-hover: #0f2744;
+      --input-bg: #fff;
+      --input-border: #cbd5e1;
+      --shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: #334155;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --input-bg: #0f172a;
+      --input-border: #475569;
+      --shadow: 0 4px 24px rgba(0,0,0,0.3);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
       background: var(--bg);
-      color: #1a202c;
-      line-height: 1.45;
-      padding: 20px 12px 60px;
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px 14px 70px;
+      transition: background 0.25s, color 0.25s;
     }
 
-    h1 {
-      text-align: center;
-      font-size: 1.45rem;
-      margin-bottom: 6px;
-      color: var(--primary);
+    .topbar {
+      max-width: 1120px;
+      margin: 0 auto 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .subtitle {
-      text-align: center;
-      color: #718096;
-      font-size: 0.9rem;
-      margin-bottom: 24px;
+    .topbar h1 {
+      font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
     }
+
+    .topbar .desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .theme-btn {
+      background: var(--panel);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .theme-btn:hover { border-color: var(--primary); }
 
     .container {
-      max-width: 1100px;
+      max-width: 1120px;
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 28px;
+      gap: 26px;
       align-items: start;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 920px) {
       .container { grid-template-columns: 1fr; }
     }
 
     .panel {
-      background: #fff;
-      border-radius: 12px;
+      background: var(--panel);
+      border-radius: 14px;
       padding: 22px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-      border: 1px solid #e2e8f0;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: background 0.25s, border 0.25s;
     }
 
     .panel h2 {
-      font-size: 1.05rem;
-      color: var(--primary);
+      font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
       margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #edf2f7;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid var(--border);
     }
 
-    .form-grid {
-      display: grid;
-      gap: 12px;
-    }
+    .form-grid { display: grid; gap: 13px; }
 
     label {
       display: block;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
-      color: var(--label);
+      color: var(--muted);
       margin-bottom: 4px;
+      letter-spacing: 0.01em;
     }
 
     input[type="text"],
     input[type="file"],
     textarea {
       width: 100%;
-      padding: 9px 11px;
-      border: 1px solid #cbd5e0;
-      border-radius: 7px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--input-border);
+      border-radius: 8px;
       font-size: 0.9rem;
-      transition: border 0.15s;
+      font-family: Inter, sans-serif;
+      background: var(--input-bg);
+      color: var(--text);
+      transition: border 0.15s, box-shadow 0.15s;
     }
 
     input:focus, textarea:focus {
       outline: none;
-      border-color: var(--primary-light);
-      box-shadow: 0 0 0 3px rgba(43,108,176,0.15);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
     }
 
-    textarea { resize: vertical; min-height: 52px; }
+    textarea { resize: vertical; min-height: 56px; }
 
     .row-2 {
       display: grid;
@@ -113,21 +168,17 @@
       gap: 10px;
     }
 
-    .upload-box {
-      text-align: center;
-    }
+    .upload-box { text-align: center; }
 
-    .upload-box label {
-      margin-bottom: 6px;
-    }
+    .upload-box label { margin-bottom: 5px; }
 
     .preview-thumb {
       width: 100%;
-      height: 70px;
+      height: 64px;
       object-fit: contain;
-      border: 1px dashed #a0aec0;
-      border-radius: 6px;
-      background: #f7fafc;
+      border: 1.5px dashed var(--input-border);
+      border-radius: 7px;
+      background: var(--bg);
       margin-top: 4px;
     }
 
@@ -138,13 +189,14 @@
       flex-wrap: wrap;
     }
 
-    button {
+    button.action {
       cursor: pointer;
       border: none;
-      border-radius: 8px;
-      padding: 11px 18px;
-      font-size: 0.9rem;
+      border-radius: 9px;
+      padding: 11px 16px;
+      font-size: 0.88rem;
       font-weight: 600;
+      font-family: Inter, sans-serif;
       transition: all 0.15s;
     }
 
@@ -153,105 +205,144 @@
       color: #fff;
       flex: 1;
     }
-    .btn-primary:hover { background: #0f2744; }
+    .btn-primary:hover { background: var(--primary-hover); }
 
     .btn-success {
-      background: #276749;
+      background: #15803d;
       color: #fff;
       flex: 1;
     }
-    .btn-success:hover { background: #1c4532; }
+    .btn-success:hover { background: #166534; }
 
     .btn-outline {
-      background: #fff;
-      color: var(--primary);
-      border: 1.5px solid var(--primary);
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
     }
-    .btn-outline:hover { background: #ebf4ff; }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 
-    /* ========== KARTU ========== */
+    .status {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      display: none;
+    }
+    .status.ok { background: #dcfce7; color: #166534; display: block; }
+    .status.err { background: #fee2e2; color: #991b1b; display: block; }
+    [data-theme="dark"] .status.ok { background: #14532d; color: #bbf7d0; }
+    [data-theme="dark"] .status.err { background: #7f1d1d; color: #fecaca; }
+
+    /* ========== KARTU (PRINT AREA) - FULL PUTIH ========== */
     .preview-wrap {
       display: flex;
       justify-content: center;
-      padding: 10px 0;
+      padding: 12px 0 8px;
+      background: #e2e8f0;
+      border-radius: 10px;
     }
+    [data-theme="dark"] .preview-wrap { background: #0f172a; }
 
     #kartu {
-      width: 420px;
-      background: #fff;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
+      width: 400px;
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
       overflow: hidden;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      color: #0f172a;
       position: relative;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
 
-    .kartu-header {
-      background: var(--primary);
-      color: #fff;
-      text-align: center;
-      padding: 14px 16px 12px;
-      position: relative;
+    /* Header logos + title (full putih seperti contoh) */
+    .kartu-top {
+      padding: 16px 18px 10px;
+      background: #ffffff;
     }
 
     .logo-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
-      height: 42px;
+      height: 48px;
+      margin-bottom: 10px;
     }
 
-    .logo-row img {
-      max-height: 40px;
-      max-width: 90px;
-      object-fit: contain;
-    }
-
-    .logo-placeholder {
-      width: 70px;
-      height: 36px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 4px;
+    /* Logo box seragam kiri-kanan + background netral
+       supaya logo putih / transparan tetap kelihatan */
+    .logo-box {
+      width: 92px;
+      height: 46px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.65rem;
-      color: rgba(255,255,255,0.7);
+      background: #f1f5f9;
+      border-radius: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
-    .kartu-header h1 {
-      color: #fff;
-      font-size: 1.15rem;
+    .logo-box img {
+      max-width: 86px;
+      max-height: 42px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .logo-placeholder {
+      font-size: 0.62rem;
+      color: #94a3b8;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .kartu-title {
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .kartu-title h1 {
+      font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.4px;
       margin: 0 0 3px;
-      letter-spacing: 0.5px;
+      line-height: 1.2;
     }
 
-    .kartu-header .sub1 {
+    .kartu-title .sub1 {
       font-size: 0.78rem;
-      opacity: 0.95;
+      font-weight: 500;
+      color: #334155;
       margin-bottom: 1px;
     }
 
-    .kartu-header .sub2 {
+    .kartu-title .sub2 {
       font-size: 0.7rem;
-      opacity: 0.85;
+      font-weight: 400;
+      color: #475569;
+      line-height: 1.3;
     }
 
+    /* Body */
     .kartu-body {
-      padding: 18px 22px 16px;
+      padding: 12px 22px 18px;
       text-align: center;
+      background: #ffffff;
     }
 
     .foto-wrap {
-      width: 118px;
-      height: 148px;
-      margin: 0 auto 12px;
-      border: 2.5px solid var(--primary);
-      border-radius: 4px;
+      width: 112px;
+      height: 140px;
+      margin: 0 auto 11px;
+      border: 2px solid #1e3a5f;
+      border-radius: 3px;
       overflow: hidden;
-      background: #edf2f7;
+      background: #f1f5f9;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -261,45 +352,51 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
 
     .foto-placeholder {
-      color: #a0aec0;
-      font-size: 0.8rem;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 500;
     }
 
     .nama {
-      font-size: 1.05rem;
+      font-family: 'Plus Jakarta Sans', Inter, sans-serif;
+      font-size: 1.02rem;
       font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 14px;
+      color: #0f172a;
+      margin-bottom: 13px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
       line-height: 1.25;
+      word-break: break-word;
     }
 
     .fields {
       text-align: left;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       margin-bottom: 14px;
+      padding: 0 4px;
     }
 
     .field {
       display: grid;
-      grid-template-columns: 105px 1fr;
-      gap: 6px;
-      margin-bottom: 5px;
+      grid-template-columns: 102px 1fr;
+      gap: 4px 8px;
+      margin-bottom: 4.5px;
       align-items: start;
+      line-height: 1.35;
     }
 
     .field .lbl {
-      color: var(--label);
+      color: #64748b;
       font-weight: 500;
     }
 
     .field .val {
       font-weight: 600;
-      color: #1a202c;
+      color: #0f172a;
       word-break: break-word;
     }
 
@@ -312,44 +409,38 @@
     }
 
     #qrcode {
-      width: 110px;
-      height: 110px;
-      margin-bottom: 6px;
+      width: 108px;
+      height: 108px;
     }
 
-    #qrcode img, #qrcode canvas {
-      width: 110px !important;
-      height: 110px !important;
-    }
-
-    .branding {
-      font-size: 0.62rem;
-      color: #a0aec0;
-      margin-top: 2px;
+    #qrcode img,
+    #qrcode canvas {
+      width: 108px !important;
+      height: 108px !important;
+      display: block;
     }
 
     .hint {
-      font-size: 0.75rem;
-      color: #718096;
-      margin-top: 10px;
-      text-align: center;
-    }
-
-    .status {
+      font-size: 0.76rem;
+      color: var(--muted);
       margin-top: 12px;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      display: none;
+      text-align: center;
+      line-height: 1.4;
     }
-    .status.ok { background: #c6f6d5; color: #22543d; display: block; }
-    .status.err { background: #fed7d7; color: #742a2a; display: block; }
   </style>
 </head>
 <body>
 
-  <h1>Generator Kartu Peserta Ujian</h1>
-  <p class="subtitle">Isi data → Generate → Download PNG HD siap print</p>
+  <div class="topbar">
+    <div>
+      <h1>Generator Kartu Peserta</h1>
+      <div class="desc">Isi data → Generate → Download PNG HD siap print</div>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
+      <span id="themeIcon">🌙</span>
+      <span id="themeLabel">Dark Mode</span>
+    </button>
+  </div>
 
   <div class="container">
     <!-- FORM -->
@@ -363,12 +454,12 @@
         </div>
 
         <div>
-          <label>Sub Judul 1 (bisa diganti sesuai event)</label>
+          <label>Sub Judul 1 (sesuai event)</label>
           <input type="text" id="sub1" value="Ujian Kompetensi Nasional" />
         </div>
 
         <div>
-          <label>Sub Judul 2 (bisa diganti sesuai event)</label>
+          <label>Sub Judul 2 (sesuai event)</label>
           <input type="text" id="sub2" value="Mahasiswa Perekam Medis dan Informasi Kesehatan" />
         </div>
 
@@ -410,13 +501,8 @@
         </div>
 
         <div>
-          <label>Teks Branding (bawah QR)</label>
-          <input type="text" id="branding" value="Generator Kartu Peserta • 2026" />
-        </div>
-
-        <div>
-          <label>Isi QR Code (kosongkan = otomatis dari Token + NIM + Nama)</label>
-          <input type="text" id="qrdata" placeholder="Contoh: TOKEN|NIM|NAMA atau URL verifikasi" />
+          <label>Isi QR Code (kosongkan = otomatis Token + NIM + Nama)</label>
+          <input type="text" id="qrdata" placeholder="TOKEN|NIM|NAMA atau URL verifikasi" />
         </div>
 
         <div>
@@ -425,25 +511,25 @@
             <div class="upload-box">
               <label>Logo Kiri</label>
               <input type="file" id="logoKiri" accept="image/*" />
-              <img id="thumbKiri" class="preview-thumb" alt="" />
+              <img id="thumbKiri" class="preview-thumb" alt="" style="display:none" />
             </div>
             <div class="upload-box">
               <label>Foto Peserta</label>
               <input type="file" id="foto" accept="image/*" />
-              <img id="thumbFoto" class="preview-thumb" alt="" />
+              <img id="thumbFoto" class="preview-thumb" alt="" style="display:none" />
             </div>
             <div class="upload-box">
               <label>Logo Kanan</label>
               <input type="file" id="logoKanan" accept="image/*" />
-              <img id="thumbKanan" class="preview-thumb" alt="" />
+              <img id="thumbKanan" class="preview-thumb" alt="" style="display:none" />
             </div>
           </div>
         </div>
 
         <div class="btn-row">
-          <button class="btn-primary" onclick="generateKartu()">Generate Kartu</button>
-          <button class="btn-success" onclick="downloadPNG()">Download PNG HD</button>
-          <button class="btn-outline" onclick="downloadPDF()">Download PDF</button>
+          <button class="action btn-primary" onclick="generateKartu()">Generate Kartu</button>
+          <button class="action btn-success" onclick="downloadPNG()">Download PNG HD</button>
+          <button class="action btn-outline" onclick="downloadPDF()">Download PDF</button>
         </div>
 
         <div id="status" class="status"></div>
@@ -455,20 +541,24 @@
       <h2>Preview Kartu</h2>
       <div class="preview-wrap">
         <div id="kartu">
-          <div class="kartu-header">
+          <!-- TOP: Logos + Title (full putih seperti contoh) -->
+          <div class="kartu-top">
             <div class="logo-row">
-              <div id="logoKiriBox">
-                <div class="logo-placeholder">Logo Kiri</div>
+              <div class="logo-box" id="logoKiriBox">
+                <div class="logo-placeholder">Logo<br>Kiri</div>
               </div>
-              <div id="logoKananBox">
-                <div class="logo-placeholder">Logo Kanan</div>
+              <div class="logo-box" id="logoKananBox">
+                <div class="logo-placeholder">Logo<br>Kanan</div>
               </div>
             </div>
-            <h1 id="pJudul">KARTU PESERTA</h1>
-            <div class="sub1" id="pSub1">Ujian Kompetensi Nasional</div>
-            <div class="sub2" id="pSub2">Mahasiswa Perekam Medis dan Informasi Kesehatan</div>
+            <div class="kartu-title">
+              <h1 id="pJudul">KARTU PESERTA</h1>
+              <div class="sub1" id="pSub1">Ujian Kompetensi Nasional</div>
+              <div class="sub2" id="pSub2">Mahasiswa Perekam Medis dan Informasi Kesehatan</div>
+            </div>
           </div>
 
+          <!-- BODY -->
           <div class="kartu-body">
             <div class="foto-wrap" id="fotoBox">
               <div class="foto-placeholder">FOTO</div>
@@ -505,46 +595,76 @@
 
             <div class="qr-section">
               <div id="qrcode"></div>
-              <div class="branding" id="pBranding">Generator Kartu Peserta • 2026</div>
             </div>
           </div>
         </div>
       </div>
-      <p class="hint">Tips: Upload logo & foto dulu, lalu klik Generate. Download PNG HD untuk hasil paling tajam (siap print).</p>
+      <p class="hint">
+        Logo otomatis diseragamkan ukuran kiri-kanan.<br>
+        Background netral pada logo biar logo putih / transparan tetap kelihatan.<br>
+        Branding sudah dihapus. Download PNG HD (4×) untuk hasil print paling tajam.
+      </p>
     </div>
   </div>
 
   <script>
-    // ========== Helpers Upload Preview ==========
-    function setupThumb(inputId, thumbId, targetBoxId, isFoto = false) {
+    // ========== Dark Mode ==========
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        html.removeAttribute('data-theme');
+        document.getElementById('themeIcon').textContent = '🌙';
+        document.getElementById('themeLabel').textContent = 'Dark Mode';
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        document.getElementById('themeIcon').textContent = '☀️';
+        document.getElementById('themeLabel').textContent = 'Light Mode';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.getElementById('themeIcon').textContent = '☀️';
+      document.getElementById('themeLabel').textContent = 'Light Mode';
+    }
+
+    // ========== Upload Preview + Auto size seragam ==========
+    function setupUpload(inputId, thumbId, boxId, isFoto = false) {
       const input = document.getElementById(inputId);
       const thumb = document.getElementById(thumbId);
 
       input.addEventListener('change', function () {
         const file = this.files[0];
         if (!file) return;
+
         const reader = new FileReader();
         reader.onload = function (e) {
-          thumb.src = e.target.result;
+          const src = e.target.result;
+          thumb.src = src;
           thumb.style.display = 'block';
 
-          // Langsung update preview kartu juga
-          const box = document.getElementById(targetBoxId);
+          const box = document.getElementById(boxId);
           if (isFoto) {
-            box.innerHTML = `<img src="${e.target.result}" alt="Foto">`;
+            box.innerHTML = `<img src="${src}" alt="Foto">`;
           } else {
-            box.innerHTML = `<img src="${e.target.result}" alt="Logo" style="max-height:40px;max-width:90px;object-fit:contain;">`;
+            // Logo: ukuran seragam (max 86x42), object-fit contain
+            // Box punya background #f1f5f9 supaya logo putih tetap kelihatan
+            box.innerHTML = `<img src="${src}" alt="Logo">`;
           }
         };
         reader.readAsDataURL(file);
       });
     }
 
-    setupThumb('logoKiri', 'thumbKiri', 'logoKiriBox');
-    setupThumb('logoKanan', 'thumbKanan', 'logoKananBox');
-    setupThumb('foto', 'thumbFoto', 'fotoBox', true);
+    setupUpload('logoKiri', 'thumbKiri', 'logoKiriBox');
+    setupUpload('logoKanan', 'thumbKanan', 'logoKananBox');
+    setupUpload('foto', 'thumbFoto', 'fotoBox', true);
 
-    // ========== Generate Kartu ==========
+    // ========== Generate ==========
     function generateKartu() {
       const judul = document.getElementById('judul').value.trim() || 'KARTU PESERTA';
       const sub1 = document.getElementById('sub1').value.trim();
@@ -556,10 +676,8 @@
       const tempat = document.getElementById('tempat').value.trim();
       const waktu = document.getElementById('waktu').value.trim();
       const jenis = document.getElementById('jenis').value.trim();
-      const branding = document.getElementById('branding').value.trim();
       let qrData = document.getElementById('qrdata').value.trim();
 
-      // Update teks
       document.getElementById('pJudul').textContent = judul;
       document.getElementById('pSub1').textContent = sub1;
       document.getElementById('pSub2').textContent = sub2;
@@ -570,45 +688,51 @@
       document.getElementById('pTempat').textContent = tempat || '-';
       document.getElementById('pWaktu').textContent = waktu || '-';
       document.getElementById('pJenis').textContent = jenis || '-';
-      document.getElementById('pBranding').textContent = branding || '';
 
-      // QR data default
       if (!qrData) {
         qrData = `TOKEN:${token}|NIM:${nim}|NAMA:${nama}`;
       }
 
-      // Generate QR
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = '';
       new QRCode(qrContainer, {
         text: qrData,
-        width: 110,
-        height: 110,
-        colorDark: '#1a202c',
+        width: 108,
+        height: 108,
+        colorDark: '#0f172a',
         colorLight: '#ffffff',
         correctLevel: QRCode.CorrectLevel.M
       });
 
-      showStatus('Kartu berhasil di-generate. Silakan download.', 'ok');
+      showStatus('Kartu berhasil di-generate.', 'ok');
     }
 
     // ========== Download PNG HD ==========
     async function downloadPNG() {
       const kartu = document.getElementById('kartu');
-      showStatus('Sedang merender PNG HD...', 'ok');
+      showStatus('Merender PNG HD (4×)...', 'ok');
 
       try {
-        // Scale tinggi biar tajam (print-ready)
+        await document.fonts.ready;
+
         const canvas = await html2canvas(kartu, {
-          scale: 4,               // 4x = sangat tajam
+          scale: 4,
           useCORS: true,
           allowTaint: true,
           backgroundColor: '#ffffff',
-          logging: false
+          logging: false,
+          onclone: (clonedDoc) => {
+            const clonedKartu = clonedDoc.getElementById('kartu');
+            if (clonedKartu) {
+              clonedKartu.style.background = '#ffffff';
+              clonedKartu.style.boxShadow = 'none';
+              clonedKartu.style.border = '1px solid #cbd5e1';
+            }
+          }
         });
 
         const link = document.createElement('a');
-        const nama = document.getElementById('nama').value.trim().replace(/\s+/g, '_') || 'peserta';
+        const nama = (document.getElementById('nama').value.trim() || 'peserta').replace(/\s+/g, '_');
         const token = document.getElementById('token').value.trim() || 'token';
         link.download = `Kartu_Peserta_${token}_${nama}.png`;
         link.href = canvas.toDataURL('image/png', 1.0);
@@ -617,16 +741,18 @@
         showStatus('PNG HD berhasil di-download!', 'ok');
       } catch (err) {
         console.error(err);
-        showStatus('Gagal render PNG: ' + err.message, 'err');
+        showStatus('Gagal: ' + err.message, 'err');
       }
     }
 
     // ========== Download PDF ==========
     async function downloadPDF() {
       const kartu = document.getElementById('kartu');
-      showStatus('Sedang merender PDF...', 'ok');
+      showStatus('Merender PDF...', 'ok');
 
       try {
+        await document.fonts.ready;
+
         const canvas = await html2canvas(kartu, {
           scale: 3,
           useCORS: true,
@@ -638,26 +764,25 @@
         const imgData = canvas.toDataURL('image/png', 1.0);
         const { jsPDF } = window.jspdf;
 
-        // Ukuran kartu di PDF (mirip proporsi asli)
-        const pdfW = 148; // mm
+        const pdfW = 148;
         const pdfH = (canvas.height / canvas.width) * pdfW;
 
         const pdf = new jsPDF({
-          orientation: pdfH > pdfW ? 'portrait' : 'landscape',
+          orientation: 'portrait',
           unit: 'mm',
           format: [pdfW, pdfH]
         });
 
         pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
 
-        const nama = document.getElementById('nama').value.trim().replace(/\s+/g, '_') || 'peserta';
+        const nama = (document.getElementById('nama').value.trim() || 'peserta').replace(/\s+/g, '_');
         const token = document.getElementById('token').value.trim() || 'token';
         pdf.save(`Kartu_Peserta_${token}_${nama}.pdf`);
 
         showStatus('PDF berhasil di-download!', 'ok');
       } catch (err) {
         console.error(err);
-        showStatus('Gagal render PDF: ' + err.message, 'err');
+        showStatus('Gagal: ' + err.message, 'err');
       }
     }
 
@@ -667,7 +792,7 @@
       el.className = 'status ' + type;
     }
 
-    // Generate awal
+    // Init
     window.addEventListener('load', () => {
       generateKartu();
     });
