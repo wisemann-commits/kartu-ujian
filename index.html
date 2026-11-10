@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Generator Kartu Peserta Ujian</title>
 
-  <!-- Font bagus & jelas -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
@@ -131,7 +130,6 @@
       font-weight: 600;
       color: var(--muted);
       margin-bottom: 4px;
-      letter-spacing: 0.01em;
     }
 
     input[type="text"],
@@ -169,7 +167,6 @@
     }
 
     .upload-box { text-align: center; }
-
     .upload-box label { margin-bottom: 5px; }
 
     .preview-thumb {
@@ -200,18 +197,10 @@
       transition: all 0.15s;
     }
 
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      flex: 1;
-    }
+    .btn-primary { background: var(--primary); color: #fff; flex: 1; }
     .btn-primary:hover { background: var(--primary-hover); }
 
-    .btn-success {
-      background: #15803d;
-      color: #fff;
-      flex: 1;
-    }
+    .btn-success { background: #15803d; color: #fff; flex: 1; }
     .btn-success:hover { background: #166534; }
 
     .btn-outline {
@@ -233,7 +222,7 @@
     [data-theme="dark"] .status.ok { background: #14532d; color: #bbf7d0; }
     [data-theme="dark"] .status.err { background: #7f1d1d; color: #fecaca; }
 
-    /* ========== KARTU (PRINT AREA) - FULL PUTIH ========== */
+    /* ========== KARTU ========== */
     .preview-wrap {
       display: flex;
       justify-content: center;
@@ -255,9 +244,9 @@
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
 
-    /* Header logos + title (full putih seperti contoh) */
+    /* === TOP: Logo + Title (full putih) === */
     .kartu-top {
-      padding: 16px 18px 10px;
+      padding: 14px 16px 8px;
       background: #ffffff;
     }
 
@@ -265,15 +254,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      height: 48px;
-      margin-bottom: 10px;
+      height: 54px;
+      margin-bottom: 8px;
     }
 
-    /* Logo box seragam kiri-kanan + background netral
-       supaya logo putih / transparan tetap kelihatan */
+    /* Logo lebih besar dikit, tetap seragam */
     .logo-box {
-      width: 92px;
-      height: 46px;
+      width: 108px;
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -284,8 +272,8 @@
     }
 
     .logo-box img {
-      max-width: 86px;
-      max-height: 42px;
+      max-width: 100px;
+      max-height: 48px;
       width: auto;
       height: auto;
       object-fit: contain;
@@ -293,7 +281,7 @@
     }
 
     .logo-placeholder {
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       color: #94a3b8;
       text-align: center;
       line-height: 1.2;
@@ -301,46 +289,45 @@
 
     .kartu-title {
       text-align: center;
-      margin-top: 2px;
     }
 
     .kartu-title h1 {
       font-family: 'Plus Jakarta Sans', Inter, sans-serif;
-      font-size: 1.18rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: #0f172a;
-      letter-spacing: 0.4px;
-      margin: 0 0 3px;
+      letter-spacing: 0.3px;
+      margin: 0 0 2px;
       line-height: 1.2;
     }
 
     .kartu-title .sub1 {
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: #334155;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #1e40af;          /* biru seperti contoh */
       margin-bottom: 1px;
     }
 
     .kartu-title .sub2 {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 400;
       color: #475569;
       line-height: 1.3;
     }
 
-    /* Body */
+    /* === BODY === */
     .kartu-body {
-      padding: 12px 22px 18px;
+      padding: 10px 20px 16px;
       text-align: center;
       background: #ffffff;
     }
 
     .foto-wrap {
-      width: 112px;
-      height: 140px;
-      margin: 0 auto 11px;
+      width: 118px;
+      height: 148px;
+      margin: 0 auto 10px;
       border: 2px solid #1e3a5f;
-      border-radius: 3px;
+      border-radius: 2px;
       overflow: hidden;
       background: #f1f5f9;
       display: flex;
@@ -348,10 +335,12 @@
       justify-content: center;
     }
 
+    /* Auto-fit foto: cover + center biar selalu pas di frame */
     .foto-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center top;
       display: block;
     }
 
@@ -363,60 +352,73 @@
 
     .nama {
       font-family: 'Plus Jakarta Sans', Inter, sans-serif;
-      font-size: 1.02rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: #0f172a;
-      margin-bottom: 13px;
+      margin-bottom: 12px;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.25px;
       line-height: 1.25;
       word-break: break-word;
     }
 
+    /* === FIELDS - gaya PERSIS contoh (banyak yang centered) === */
     .fields {
-      text-align: left;
-      font-size: 0.78rem;
-      margin-bottom: 14px;
-      padding: 0 4px;
+      text-align: center;
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+      line-height: 1.45;
     }
 
-    .field {
-      display: grid;
-      grid-template-columns: 102px 1fr;
-      gap: 4px 8px;
-      margin-bottom: 4.5px;
-      align-items: start;
-      line-height: 1.35;
-    }
-
-    .field .lbl {
-      color: #64748b;
+    /* Field pendek: Label: Value dalam 1 baris */
+    .field-inline {
+      margin-bottom: 3px;
       font-weight: 500;
     }
-
-    .field .val {
+    .field-inline .lbl {
+      color: #334155;
       font-weight: 600;
+    }
+    .field-inline .val {
       color: #0f172a;
-      word-break: break-word;
+      font-weight: 600;
+    }
+
+    /* Field panjang: Label di atas, value di bawah (keduanya centered) */
+    .field-block {
+      margin: 7px 0 3px;
+    }
+    .field-block .lbl {
+      display: block;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1px;
+    }
+    .field-block .val {
+      display: block;
+      font-weight: 500;
+      color: #1e293b;
+      padding: 0 8px;
+      line-height: 1.35;
     }
 
     .qr-section {
       border-top: 1px solid #e2e8f0;
-      padding-top: 12px;
+      padding-top: 11px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
     #qrcode {
-      width: 108px;
-      height: 108px;
+      width: 112px;
+      height: 112px;
     }
 
     #qrcode img,
     #qrcode canvas {
-      width: 108px !important;
-      height: 108px !important;
+      width: 112px !important;
+      height: 112px !important;
       display: block;
     }
 
@@ -443,7 +445,6 @@
   </div>
 
   <div class="container">
-    <!-- FORM -->
     <div class="panel">
       <h2>Data Peserta</h2>
       <div class="form-grid">
@@ -536,12 +537,10 @@
       </div>
     </div>
 
-    <!-- PREVIEW -->
     <div class="panel">
       <h2>Preview Kartu</h2>
       <div class="preview-wrap">
         <div id="kartu">
-          <!-- TOP: Logos + Title (full putih seperti contoh) -->
           <div class="kartu-top">
             <div class="logo-row">
               <div class="logo-box" id="logoKiriBox">
@@ -558,7 +557,6 @@
             </div>
           </div>
 
-          <!-- BODY -->
           <div class="kartu-body">
             <div class="foto-wrap" id="fotoBox">
               <div class="foto-placeholder">FOTO</div>
@@ -566,31 +564,9 @@
 
             <div class="nama" id="pNama">ZULFA SATRIA WANDANA</div>
 
-            <div class="fields">
-              <div class="field">
-                <span class="lbl">NIM:</span>
-                <span class="val" id="pNim">3315153008050003</span>
-              </div>
-              <div class="field">
-                <span class="lbl">Token Ujian:</span>
-                <span class="val" id="pToken">039201807760</span>
-              </div>
-              <div class="field">
-                <span class="lbl">Asal:</span>
-                <span class="val" id="pAsal">POLITEKNIK RUKUN ABDI LUHUR</span>
-              </div>
-              <div class="field">
-                <span class="lbl">Tempat Ujian:</span>
-                <span class="val" id="pTempat">Poltekkes Kemenkes Semarang Lab RMIK, Kota Semarang, Jawa Tengah</span>
-              </div>
-              <div class="field">
-                <span class="lbl">Waktu Ujian:</span>
-                <span class="val" id="pWaktu">2026-08-15, 09:00 WIB</span>
-              </div>
-              <div class="field">
-                <span class="lbl">Jenis Ujian:</span>
-                <span class="val" id="pJenis">CBT</span>
-              </div>
+            <!-- FIELDS mengikuti gaya asli (centered) -->
+            <div class="fields" id="fieldsContainer">
+              <!-- diisi oleh JS -->
             </div>
 
             <div class="qr-section">
@@ -600,15 +576,13 @@
         </div>
       </div>
       <p class="hint">
-        Logo otomatis diseragamkan ukuran kiri-kanan.<br>
-        Background netral pada logo biar logo putih / transparan tetap kelihatan.<br>
-        Branding sudah dihapus. Download PNG HD (4×) untuk hasil print paling tajam.
+        Layout field sekarang mengikuti contoh asli (banyak yang rata tengah).<br>
+        Logo sudah diperbesar sedikit + seragam. Foto auto-fit cover.
       </p>
     </div>
   </div>
 
   <script>
-    // ========== Dark Mode ==========
     function toggleTheme() {
       const html = document.documentElement;
       const isDark = html.getAttribute('data-theme') === 'dark';
@@ -625,14 +599,12 @@
       }
     }
 
-    // Load saved theme
     if (localStorage.getItem('theme') === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
       document.getElementById('themeIcon').textContent = '☀️';
       document.getElementById('themeLabel').textContent = 'Light Mode';
     }
 
-    // ========== Upload Preview + Auto size seragam ==========
     function setupUpload(inputId, thumbId, boxId, isFoto = false) {
       const input = document.getElementById(inputId);
       const thumb = document.getElementById(thumbId);
@@ -651,8 +623,6 @@
           if (isFoto) {
             box.innerHTML = `<img src="${src}" alt="Foto">`;
           } else {
-            // Logo: ukuran seragam (max 86x42), object-fit contain
-            // Box punya background #f1f5f9 supaya logo putih tetap kelihatan
             box.innerHTML = `<img src="${src}" alt="Logo">`;
           }
         };
@@ -664,7 +634,6 @@
     setupUpload('logoKanan', 'thumbKanan', 'logoKananBox');
     setupUpload('foto', 'thumbFoto', 'fotoBox', true);
 
-    // ========== Generate ==========
     function generateKartu() {
       const judul = document.getElementById('judul').value.trim() || 'KARTU PESERTA';
       const sub1 = document.getElementById('sub1').value.trim();
@@ -682,12 +651,37 @@
       document.getElementById('pSub1').textContent = sub1;
       document.getElementById('pSub2').textContent = sub2;
       document.getElementById('pNama').textContent = nama || 'NAMA PESERTA';
-      document.getElementById('pNim').textContent = nim || '-';
-      document.getElementById('pToken').textContent = token || '-';
-      document.getElementById('pAsal').textContent = asal || '-';
-      document.getElementById('pTempat').textContent = tempat || '-';
-      document.getElementById('pWaktu').textContent = waktu || '-';
-      document.getElementById('pJenis').textContent = jenis || '-';
+
+      // Build fields PERSIS gaya contoh
+      const container = document.getElementById('fieldsContainer');
+      container.innerHTML = '';
+
+      // Field pendek → inline "Label: Value"
+      function addInline(label, value) {
+        if (!value) return;
+        const div = document.createElement('div');
+        div.className = 'field-inline';
+        div.innerHTML = `<span class="lbl">${label}:</span> <span class="val">${value}</span>`;
+        container.appendChild(div);
+      }
+
+      // Field panjang → block (label di atas, value di bawah, centered)
+      function addBlock(label, value) {
+        if (!value) return;
+        const div = document.createElement('div');
+        div.className = 'field-block';
+        div.innerHTML = `<span class="lbl">${label}:</span><span class="val">${value}</span>`;
+        container.appendChild(div);
+      }
+
+      addInline('NIM', nim);
+      addInline('Token Ujian', token);
+      addInline('Asal', asal);
+
+      // Yang biasanya panjang → block style seperti contoh
+      addBlock('Tempat Ujian', tempat);
+      addBlock('Waktu Ujian', waktu);
+      addBlock('Jenis Ujian', jenis);
 
       if (!qrData) {
         qrData = `TOKEN:${token}|NIM:${nim}|NAMA:${nama}`;
@@ -697,8 +691,8 @@
       qrContainer.innerHTML = '';
       new QRCode(qrContainer, {
         text: qrData,
-        width: 108,
-        height: 108,
+        width: 112,
+        height: 112,
         colorDark: '#0f172a',
         colorLight: '#ffffff',
         correctLevel: QRCode.CorrectLevel.M
@@ -707,7 +701,6 @@
       showStatus('Kartu berhasil di-generate.', 'ok');
     }
 
-    // ========== Download PNG HD ==========
     async function downloadPNG() {
       const kartu = document.getElementById('kartu');
       showStatus('Merender PNG HD (4×)...', 'ok');
@@ -726,7 +719,6 @@
             if (clonedKartu) {
               clonedKartu.style.background = '#ffffff';
               clonedKartu.style.boxShadow = 'none';
-              clonedKartu.style.border = '1px solid #cbd5e1';
             }
           }
         });
@@ -745,7 +737,6 @@
       }
     }
 
-    // ========== Download PDF ==========
     async function downloadPDF() {
       const kartu = document.getElementById('kartu');
       showStatus('Merender PDF...', 'ok');
@@ -792,7 +783,6 @@
       el.className = 'status ' + type;
     }
 
-    // Init
     window.addEventListener('load', () => {
       generateKartu();
     });
