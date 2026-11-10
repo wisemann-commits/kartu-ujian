@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generator Kartu Peserta Ujian</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --primary: #1a365d;
+      --primary-light: #2b6cb0;
+      --border: #2d3748;
+      --label: #4a5568;
+      --bg: #f0f4f8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: #1a202c;
+      line-height: 1.45;
+      padding: 20px 12px 60px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.45rem;
+      margin-bottom: 6px;
+      color: var(--primary);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: #fff;
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+    }
+
+    .panel h2 {
+      font-size: 1.05rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #edf2f7;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--label);
+      margin-bottom: 4px;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #cbd5e0;
+      border-radius: 7px;
+      font-size: 0.9rem;
+      transition: border 0.15s;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(43,108,176,0.15);
+    }
+
+    textarea { resize: vertical; min-height: 52px; }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .upload-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .upload-box {
+      text-align: center;
+    }
+
+    .upload-box label {
+      margin-bottom: 6px;
+    }
+
+    .preview-thumb {
+      width: 100%;
+      height: 70px;
+      object-fit: contain;
+      border: 1px dashed #a0aec0;
+      border-radius: 6px;
+      background: #f7fafc;
+      margin-top: 4px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      flex: 1;
+    }
+    .btn-primary:hover { background: #0f2744; }
+
+    .btn-success {
+      background: #276749;
+      color: #fff;
+      flex: 1;
+    }
+    .btn-success:hover { background: #1c4532; }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+    }
+    .btn-outline:hover { background: #ebf4ff; }
+
+    /* ========== KARTU ========== */
+    .preview-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 10px 0;
+    }
+
+    #kartu {
+      width: 420px;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      position: relative;
+    }
+
+    .kartu-header {
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+      padding: 14px 16px 12px;
+      position: relative;
+    }
+
+    .logo-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      height: 42px;
+    }
+
+    .logo-row img {
+      max-height: 40px;
+      max-width: 90px;
+      object-fit: contain;
+    }
+
+    .logo-placeholder {
+      width: 70px;
+      height: 36px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .kartu-header h1 {
+      color: #fff;
+      font-size: 1.15rem;
+      margin: 0 0 3px;
+      letter-spacing: 0.5px;
+    }
+
+    .kartu-header .sub1 {
+      font-size: 0.78rem;
+      opacity: 0.95;
+      margin-bottom: 1px;
+    }
+
+    .kartu-header .sub2 {
+      font-size: 0.7rem;
+      opacity: 0.85;
+    }
+
+    .kartu-body {
+      padding: 18px 22px 16px;
+      text-align: center;
+    }
+
+    .foto-wrap {
+      width: 118px;
+      height: 148px;
+      margin: 0 auto 12px;
+      border: 2.5px solid var(--primary);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #edf2f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .foto-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .foto-placeholder {
+      color: #a0aec0;
+      font-size: 0.8rem;
+    }
+
+    .nama {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      line-height: 1.25;
+    }
+
+    .fields {
+      text-align: left;
+      font-size: 0.8rem;
+      margin-bottom: 14px;
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: 105px 1fr;
+      gap: 6px;
+      margin-bottom: 5px;
+      align-items: start;
+    }
+
+    .field .lbl {
+      color: var(--label);
+      font-weight: 500;
+    }
+
+    .field .val {
+      font-weight: 600;
+      color: #1a202c;
+      word-break: break-word;
+    }
+
+    .qr-section {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #qrcode {
+      width: 110px;
+      height: 110px;
+      margin-bottom: 6px;
+    }
+
+    #qrcode img, #qrcode canvas {
+      width: 110px !important;
+      height: 110px !important;
+    }
+
+    .branding {
+      font-size: 0.62rem;
+      color: #a0aec0;
+      margin-top: 2px;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: #718096;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .status {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      display: none;
+    }
+    .status.ok { background: #c6f6d5; color: #22543d; display: block; }
+    .status.err { background: #fed7d7; color: #742a2a; display: block; }
+  </style>
+</head>
+<body>
+
+  <h1>Generator Kartu Peserta Ujian</h1>
+  <p class="subtitle">Isi data → Generate → Download PNG HD siap print</p>
+
+  <div class="container">
+    <!-- FORM -->
+    <div class="panel">
+      <h2>Data Peserta</h2>
+      <div class="form-grid">
+
+        <div>
+          <label>Judul Utama</label>
+          <input type="text" id="judul" value="KARTU PESERTA" />
+        </div>
+
+        <div>
+          <label>Sub Judul 1 (bisa diganti sesuai event)</label>
+          <input type="text" id="sub1" value="Ujian Kompetensi Nasional" />
+        </div>
+
+        <div>
+          <label>Sub Judul 2 (bisa diganti sesuai event)</label>
+          <input type="text" id="sub2" value="Mahasiswa Perekam Medis dan Informasi Kesehatan" />
+        </div>
+
+        <div>
+          <label>Nama Lengkap</label>
+          <input type="text" id="nama" value="ZULFA SATRIA WANDANA" />
+        </div>
+
+        <div class="row-2">
+          <div>
+            <label>NIM</label>
+            <input type="text" id="nim" value="3315153008050003" />
+          </div>
+          <div>
+            <label>Token Ujian</label>
+            <input type="text" id="token" value="039201807760" />
+          </div>
+        </div>
+
+        <div>
+          <label>Asal</label>
+          <input type="text" id="asal" value="POLITEKNIK RUKUN ABDI LUHUR" />
+        </div>
+
+        <div>
+          <label>Tempat Ujian</label>
+          <textarea id="tempat">Poltekkes Kemenkes Semarang Lab RMIK, Kota Semarang, Jawa Tengah</textarea>
+        </div>
+
+        <div class="row-2">
+          <div>
+            <label>Waktu Ujian</label>
+            <input type="text" id="waktu" value="2026-08-15, 09:00 WIB" />
+          </div>
+          <div>
+            <label>Jenis Ujian</label>
+            <input type="text" id="jenis" value="CBT" />
+          </div>
+        </div>
+
+        <div>
+          <label>Teks Branding (bawah QR)</label>
+          <input type="text" id="branding" value="Generator Kartu Peserta • 2026" />
+        </div>
+
+        <div>
+          <label>Isi QR Code (kosongkan = otomatis dari Token + NIM + Nama)</label>
+          <input type="text" id="qrdata" placeholder="Contoh: TOKEN|NIM|NAMA atau URL verifikasi" />
+        </div>
+
+        <div>
+          <label>Upload Gambar</label>
+          <div class="upload-group">
+            <div class="upload-box">
+              <label>Logo Kiri</label>
+              <input type="file" id="logoKiri" accept="image/*" />
+              <img id="thumbKiri" class="preview-thumb" alt="" />
+            </div>
+            <div class="upload-box">
+              <label>Foto Peserta</label>
+              <input type="file" id="foto" accept="image/*" />
+              <img id="thumbFoto" class="preview-thumb" alt="" />
+            </div>
+            <div class="upload-box">
+              <label>Logo Kanan</label>
+              <input type="file" id="logoKanan" accept="image/*" />
+              <img id="thumbKanan" class="preview-thumb" alt="" />
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary" onclick="generateKartu()">Generate Kartu</button>
+          <button class="btn-success" onclick="downloadPNG()">Download PNG HD</button>
+          <button class="btn-outline" onclick="downloadPDF()">Download PDF</button>
+        </div>
+
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="panel">
+      <h2>Preview Kartu</h2>
+      <div class="preview-wrap">
+        <div id="kartu">
+          <div class="kartu-header">
+            <div class="logo-row">
+              <div id="logoKiriBox">
+                <div class="logo-placeholder">Logo Kiri</div>
+              </div>
+              <div id="logoKananBox">
+                <div class="logo-placeholder">Logo Kanan</div>
+              </div>
+            </div>
+            <h1 id="pJudul">KARTU PESERTA</h1>
+            <div class="sub1" id="pSub1">Ujian Kompetensi Nasional</div>
+            <div class="sub2" id="pSub2">Mahasiswa Perekam Medis dan Informasi Kesehatan</div>
+          </div>
+
+          <div class="kartu-body">
+            <div class="foto-wrap" id="fotoBox">
+              <div class="foto-placeholder">FOTO</div>
+            </div>
+
+            <div class="nama" id="pNama">ZULFA SATRIA WANDANA</div>
+
+            <div class="fields">
+              <div class="field">
+                <span class="lbl">NIM:</span>
+                <span class="val" id="pNim">3315153008050003</span>
+              </div>
+              <div class="field">
+                <span class="lbl">Token Ujian:</span>
+                <span class="val" id="pToken">039201807760</span>
+              </div>
+              <div class="field">
+                <span class="lbl">Asal:</span>
+                <span class="val" id="pAsal">POLITEKNIK RUKUN ABDI LUHUR</span>
+              </div>
+              <div class="field">
+                <span class="lbl">Tempat Ujian:</span>
+                <span class="val" id="pTempat">Poltekkes Kemenkes Semarang Lab RMIK, Kota Semarang, Jawa Tengah</span>
+              </div>
+              <div class="field">
+                <span class="lbl">Waktu Ujian:</span>
+                <span class="val" id="pWaktu">2026-08-15, 09:00 WIB</span>
+              </div>
+              <div class="field">
+                <span class="lbl">Jenis Ujian:</span>
+                <span class="val" id="pJenis">CBT</span>
+              </div>
+            </div>
+
+            <div class="qr-section">
+              <div id="qrcode"></div>
+              <div class="branding" id="pBranding">Generator Kartu Peserta • 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="hint">Tips: Upload logo & foto dulu, lalu klik Generate. Download PNG HD untuk hasil paling tajam (siap print).</p>
+    </div>
+  </div>
+
+  <script>
+    // ========== Helpers Upload Preview ==========
+    function setupThumb(inputId, thumbId, targetBoxId, isFoto = false) {
+      const input = document.getElementById(inputId);
+      const thumb = document.getElementById(thumbId);
+
+      input.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          thumb.src = e.target.result;
+          thumb.style.display = 'block';
+
+          // Langsung update preview kartu juga
+          const box = document.getElementById(targetBoxId);
+          if (isFoto) {
+            box.innerHTML = `<img src="${e.target.result}" alt="Foto">`;
+          } else {
+            box.innerHTML = `<img src="${e.target.result}" alt="Logo" style="max-height:40px;max-width:90px;object-fit:contain;">`;
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    setupThumb('logoKiri', 'thumbKiri', 'logoKiriBox');
+    setupThumb('logoKanan', 'thumbKanan', 'logoKananBox');
+    setupThumb('foto', 'thumbFoto', 'fotoBox', true);
+
+    // ========== Generate Kartu ==========
+    function generateKartu() {
+      const judul = document.getElementById('judul').value.trim() || 'KARTU PESERTA';
+      const sub1 = document.getElementById('sub1').value.trim();
+      const sub2 = document.getElementById('sub2').value.trim();
+      const nama = document.getElementById('nama').value.trim().toUpperCase();
+      const nim = document.getElementById('nim').value.trim();
+      const token = document.getElementById('token').value.trim();
+      const asal = document.getElementById('asal').value.trim();
+      const tempat = document.getElementById('tempat').value.trim();
+      const waktu = document.getElementById('waktu').value.trim();
+      const jenis = document.getElementById('jenis').value.trim();
+      const branding = document.getElementById('branding').value.trim();
+      let qrData = document.getElementById('qrdata').value.trim();
+
+      // Update teks
+      document.getElementById('pJudul').textContent = judul;
+      document.getElementById('pSub1').textContent = sub1;
+      document.getElementById('pSub2').textContent = sub2;
+      document.getElementById('pNama').textContent = nama || 'NAMA PESERTA';
+      document.getElementById('pNim').textContent = nim || '-';
+      document.getElementById('pToken').textContent = token || '-';
+      document.getElementById('pAsal').textContent = asal || '-';
+      document.getElementById('pTempat').textContent = tempat || '-';
+      document.getElementById('pWaktu').textContent = waktu || '-';
+      document.getElementById('pJenis').textContent = jenis || '-';
+      document.getElementById('pBranding').textContent = branding || '';
+
+      // QR data default
+      if (!qrData) {
+        qrData = `TOKEN:${token}|NIM:${nim}|NAMA:${nama}`;
+      }
+
+      // Generate QR
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+      new QRCode(qrContainer, {
+        text: qrData,
+        width: 110,
+        height: 110,
+        colorDark: '#1a202c',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      showStatus('Kartu berhasil di-generate. Silakan download.', 'ok');
+    }
+
+    // ========== Download PNG HD ==========
+    async function downloadPNG() {
+      const kartu = document.getElementById('kartu');
+      showStatus('Sedang merender PNG HD...', 'ok');
+
+      try {
+        // Scale tinggi biar tajam (print-ready)
+        const canvas = await html2canvas(kartu, {
+          scale: 4,               // 4x = sangat tajam
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          logging: false
+        });
+
+        const link = document.createElement('a');
+        const nama = document.getElementById('nama').value.trim().replace(/\s+/g, '_') || 'peserta';
+        const token = document.getElementById('token').value.trim() || 'token';
+        link.download = `Kartu_Peserta_${token}_${nama}.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+
+        showStatus('PNG HD berhasil di-download!', 'ok');
+      } catch (err) {
+        console.error(err);
+        showStatus('Gagal render PNG: ' + err.message, 'err');
+      }
+    }
+
+    // ========== Download PDF ==========
+    async function downloadPDF() {
+      const kartu = document.getElementById('kartu');
+      showStatus('Sedang merender PDF...', 'ok');
+
+      try {
+        const canvas = await html2canvas(kartu, {
+          scale: 3,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          logging: false
+        });
+
+        const imgData = canvas.toDataURL('image/png', 1.0);
+        const { jsPDF } = window.jspdf;
+
+        // Ukuran kartu di PDF (mirip proporsi asli)
+        const pdfW = 148; // mm
+        const pdfH = (canvas.height / canvas.width) * pdfW;
+
+        const pdf = new jsPDF({
+          orientation: pdfH > pdfW ? 'portrait' : 'landscape',
+          unit: 'mm',
+          format: [pdfW, pdfH]
+        });
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
+
+        const nama = document.getElementById('nama').value.trim().replace(/\s+/g, '_') || 'peserta';
+        const token = document.getElementById('token').value.trim() || 'token';
+        pdf.save(`Kartu_Peserta_${token}_${nama}.pdf`);
+
+        showStatus('PDF berhasil di-download!', 'ok');
+      } catch (err) {
+        console.error(err);
+        showStatus('Gagal render PDF: ' + err.message, 'err');
+      }
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = 'status ' + type;
+    }
+
+    // Generate awal
+    window.addEventListener('load', () => {
+      generateKartu();
+    });
+  </script>
+</body>
+</html>
